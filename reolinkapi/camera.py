@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from reolinkapi.handlers.api_handler import APIHandler
 
 
@@ -25,11 +27,13 @@ class Camera(APIHandler):
         More information on proxies in requests: https://stackoverflow.com/a/15661226/9313679
         """
         if profile not in ["main", "sub"]:
-            raise Exception("Profile argument must be either \"main\" or \"sub\"")
+            raise Exception(
+                "Profile argument must be either \"main\" or \"sub\"")
 
         # For when you need to connect to a camera behind a proxy, pass
         # a proxy argument: proxy={"http": "socks5://127.0.0.1:8000"}
-        APIHandler.__init__(self, ip, username, password, https=https, **kwargs)
+        APIHandler.__init__(self, ip, username, password,
+                            https=https, **kwargs)
 
         # Normal call without proxy:
         # APIHandler.__init__(self, ip, username, password)
@@ -41,3 +45,21 @@ class Camera(APIHandler):
 
         if not defer_login:
             super().login()
+
+    def __enter__(self) -> Camera:
+        """
+        Enable Context manager.
+        The context manager will handle login and logout.
+        Use:
+            with Camera(ip, username, password) as cam:
+                ...
+        It doesn't make much sense to use this with "defer_login=False".
+        """
+        return self
+
+    def __exit__(self, *args, **kwargs) -> bool:
+        """
+        Context manager handles logout of the camera.
+        """
+        self.logout()
+        return False
