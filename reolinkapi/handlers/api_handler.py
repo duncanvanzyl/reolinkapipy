@@ -1,5 +1,7 @@
-import requests
 from typing import Dict, List, Optional, Union
+
+import requests
+from reolinkapi.handlers.rest_handler import Request
 from reolinkapi.mixins.alarm import AlarmAPIMixin
 from reolinkapi.mixins.device import DeviceAPIMixin
 from reolinkapi.mixins.display import DisplayAPIMixin
@@ -7,9 +9,9 @@ from reolinkapi.mixins.download import DownloadAPIMixin
 from reolinkapi.mixins.image import ImageAPIMixin
 from reolinkapi.mixins.motion import MotionAPIMixin
 from reolinkapi.mixins.network import NetworkAPIMixin
+from reolinkapi.mixins.nvr_download import NVRDownloadAPIMixin
 from reolinkapi.mixins.ptz import PtzAPIMixin
 from reolinkapi.mixins.record import RecordAPIMixin
-from reolinkapi.handlers.rest_handler import Request
 from reolinkapi.mixins.stream import StreamAPIMixin
 from reolinkapi.mixins.system import SystemAPIMixin
 from reolinkapi.mixins.user import UserAPIMixin
@@ -23,6 +25,7 @@ class APIHandler(AlarmAPIMixin,
                  ImageAPIMixin,
                  MotionAPIMixin,
                  NetworkAPIMixin,
+                 NVRDownloadAPIMixin,
                  PtzAPIMixin,
                  RecordAPIMixin,
                  SystemAPIMixin,
@@ -55,7 +58,8 @@ class APIHandler(AlarmAPIMixin,
         self.token = None
         self.username = username
         self.password = password
-        Request.proxies = kwargs.get("proxy")  # Defaults to None if key isn't found
+        # Defaults to None if key isn't found
+        Request.proxies = kwargs.get("proxy")
 
     def login(self) -> bool:
         """
